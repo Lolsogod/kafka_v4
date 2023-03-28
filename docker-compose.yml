@@ -35,6 +35,7 @@ services:
       - KAFKA_USER=user
       - KAFKA_MOVIE=movie
       - KAFKA_REVIEW=review
+      - DATA_URL=http://app2:8081
     depends_on:
       - kafka
   app2:

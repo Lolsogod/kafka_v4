@@ -82,13 +82,13 @@ consumer.on('error', (err) => {
 });
 //search API
 app.get('/s/users', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.send(yield User.find(req.body));
+    res.send(yield User.find(req.query));
 }));
 app.get('/s/movies', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.send(yield Movie.find(req.body));
+    res.send(yield Movie.find(req.query));
 }));
 app.get('/s/reviews', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.send(yield Review.find(req.body));
+    res.send(yield Review.find(req.query));
 }));
 //report api
 app.get('/r/top-rating', (req, res) => __awaiter(void 0, void 0, void 0, function* () {

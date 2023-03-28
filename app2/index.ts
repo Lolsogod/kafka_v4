@@ -85,13 +85,13 @@ consumer.on('error', (err)=>{
 
 //search API
 app.get('/s/users', async (req,res)=>{
-    res.send(await User.find(req.body))
+    res.send(await User.find(req.query))
 })
 app.get('/s/movies', async (req,res)=>{
-    res.send(await Movie.find(req.body))
+    res.send(await Movie.find(req.query))
 })
 app.get('/s/reviews', async (req,res)=>{
-    res.send(await Review.find(req.body))
+    res.send(await Review.find(req.query))
 })
 //report api
 app.get('/r/top-rating', async (req,res)=>{
