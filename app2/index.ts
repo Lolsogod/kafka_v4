@@ -83,4 +83,15 @@ consumer.on('error', (err)=>{
     console.log(err)
 })
 
+//search API
+app.get('/s/users', async (req,res)=>{
+    res.send(await User.find(req.body))
+})
+app.get('/s/movies', async (req,res)=>{
+    res.send(await Movie.find(req.body))
+})
+app.get('/s/reviews', async (req,res)=>{
+    res.send(await Review.find(req.body))
+})
+
 app.listen(process.env.PORT)

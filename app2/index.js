@@ -80,4 +80,14 @@ consumer.on('message', (message) => __awaiter(void 0, void 0, void 0, function* 
 consumer.on('error', (err) => {
     console.log(err);
 });
+//search API
+app.get('/s/users', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.send(yield User.find(req.body));
+}));
+app.get('/s/movies', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.send(yield Movie.find(req.body));
+}));
+app.get('/s/reviews', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.send(yield Review.find(req.body));
+}));
 app.listen(process.env.PORT);
