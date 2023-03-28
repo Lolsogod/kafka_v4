@@ -48,53 +48,38 @@ const reviewSchema = new Schema<IReview>({
     text: {type: String, required: false},
     likes: {type: Number, required: false}
 })
+reviewSchema.index({ author: 1, movie: 1}, { unique: true });
 const Review = model<IReview>('review', reviewSchema);
 //user consumer
 const client = new kafka.KafkaClient({kafkaHost: process.env.KAFKA_BOOTSTRAP_SERVERS})
-const userCons = new kafka.Consumer(client, [{topic: "user", partition: 0}],{
-     groupId: 'group1'
+const consumer = new kafka.Consumer(client,
+    [{topic: 'user'}, {topic: 'movie'}, {topic: 'review'}],
+    {autoCommit: false}
+);
+consumer.on('message', async (message)=>{
+    if (message.topic == 'movie'){
+        const movie = await new Movie(JSON.parse(message.value.toString()))
+        try{
+            await movie.save()  
+        }catch(e) {console.log(e)} 
+    }
+    else if (message.topic == 'user'){
+        const user = await new User(JSON.parse(message.value.toString()))
+        try{
+            await user.save()  
+        }catch(e) {console.log(e)} 
+    }
+    else if (message.topic == 'review'){
+        let parsed = JSON.parse(message.value.toString())
+        parsed.author = await User.findOne({login: parsed.author})
+        parsed.movie = await Movie.findOne({title: parsed.movie})
+        const review = await new Review(parsed)
+        try{
+            await review.save()  
+        }catch(e) {console.log(e)} 
+    }
 })
-console.log(process.env.KAFKA_USER || "user")
-const movieCons = new kafka.Consumer(client, [{topic: "movie", partition: 0}],{
-     groupId: 'group2'
-})
-const reviewCons = new kafka.Consumer(client, [{topic: "review", partition: 0}],{
-     groupId: 'group3'
-})
-userCons.on('message', async (message)=>{
-    const user = await new User(JSON.parse(message.value.toString()))
-    try{
-        await user.save()  
-    }catch(e) {console.log(e)} 
-})
-userCons.on('error', (err)=>{
-    console.log(err)
-})
-//movie consumer
-
-movieCons.on('message', async (message)=>{
-    const movie = await new Movie(JSON.parse(message.value.toString()))
-    console.log('##########################################.')
-    console.log(message.value.toString())
-    console.log('##########################################.')
-    try{
-        await movie.save()  
-    }catch(e) {console.log(e)} 
-})
-movieCons.on('error', (err)=>{
-    console.log(err)
-})
-//review consumer
-reviewCons.on('message', async (message)=>{
-    console.log('##########################################')
-    console.log(message.value.toString())
-    console.log('##########################################')
-    const review = await new Review(JSON.parse(message.value.toString()))
-    try{
-        await review.save()  
-    }catch(e) {console.log(e)} 
-})
-reviewCons.on('error', (err)=>{
+consumer.on('error', (err)=>{
     console.log(err)
 })
 

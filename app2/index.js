@@ -40,61 +40,44 @@ const reviewSchema = new mongoose_1.Schema({
     text: { type: String, required: false },
     likes: { type: Number, required: false }
 });
+reviewSchema.index({ author: 1, movie: 1 }, { unique: true });
 const Review = (0, mongoose_1.model)('review', reviewSchema);
 //user consumer
 const client = new kafka_node_1.default.KafkaClient({ kafkaHost: process.env.KAFKA_BOOTSTRAP_SERVERS });
-const userCons = new kafka_node_1.default.Consumer(client, [{ topic: "user", partition: 0 }], {
-    groupId: 'group1'
-});
-console.log(process.env.KAFKA_USER || "user");
-const movieCons = new kafka_node_1.default.Consumer(client, [{ topic: "movie", partition: 0 }], {
-    groupId: 'group2'
-});
-const reviewCons = new kafka_node_1.default.Consumer(client, [{ topic: "review", partition: 0 }], {
-    groupId: 'group3'
-});
-userCons.on('message', (message) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield new User(JSON.parse(message.value.toString()));
-    try {
-        yield user.save();
+const consumer = new kafka_node_1.default.Consumer(client, [{ topic: 'user' }, { topic: 'movie' }, { topic: 'review' }], { autoCommit: false });
+consumer.on('message', (message) => __awaiter(void 0, void 0, void 0, function* () {
+    if (message.topic == 'movie') {
+        const movie = yield new Movie(JSON.parse(message.value.toString()));
+        try {
+            yield movie.save();
+        }
+        catch (e) {
+            console.log(e);
+        }
     }
-    catch (e) {
-        console.log(e);
+    else if (message.topic == 'user') {
+        const user = yield new User(JSON.parse(message.value.toString()));
+        try {
+            yield user.save();
+        }
+        catch (e) {
+            console.log(e);
+        }
     }
-}));
-userCons.on('error', (err) => {
-    console.log(err);
-});
-//movie consumer
-movieCons.on('message', (message) => __awaiter(void 0, void 0, void 0, function* () {
-    const movie = yield new Movie(JSON.parse(message.value.toString()));
-    console.log('##########################################.');
-    console.log(message.value.toString());
-    console.log('##########################################.');
-    try {
-        yield movie.save();
-    }
-    catch (e) {
-        console.log(e);
+    else if (message.topic == 'review') {
+        let parsed = JSON.parse(message.value.toString());
+        parsed.author = yield User.findOne({ login: parsed.author });
+        parsed.movie = yield Movie.findOne({ title: parsed.movie });
+        const review = yield new Review(parsed);
+        try {
+            yield review.save();
+        }
+        catch (e) {
+            console.log(e);
+        }
     }
 }));
-movieCons.on('error', (err) => {
-    console.log(err);
-});
-//review consumer
-reviewCons.on('message', (message) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log('##########################################');
-    console.log(message.value.toString());
-    console.log('##########################################');
-    const review = yield new Review(JSON.parse(message.value.toString()));
-    try {
-        yield review.save();
-    }
-    catch (e) {
-        console.log(e);
-    }
-}));
-reviewCons.on('error', (err) => {
+consumer.on('error', (err) => {
     console.log(err);
 });
 app.listen(process.env.PORT);
