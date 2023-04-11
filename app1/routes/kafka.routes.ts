@@ -14,7 +14,7 @@ usrProducer.on('ready', async ()=>{
     router.post('/reg', async (req,res)=>{
         usrProducer.send([{topic: process.env.KAFKA_USER!,
             messages: JSON.stringify(UserDto.parseDTOadd(req.body))}], async (err)=>{
-                if (err) console.log(err)
+                if (err) res.send(err)
                 else{res.send(req.body)}
         })
     })
@@ -23,7 +23,7 @@ movProducer.on('ready', async ()=>{
     router.post('/movie', async (req,res)=>{
         usrProducer.send([{topic: process.env.KAFKA_MOVIE!,
             messages: JSON.stringify(MovieDto.parseDTOadd(req.body))}], async (err)=>{
-                if (err) console.log(err)
+                if (err) res.send(err)
                 else{res.send(req.body)}
         })
     })
@@ -32,7 +32,7 @@ revProducer.on('ready', async ()=>{
     router.post('/review', async (req,res)=>{
         revProducer.send([{topic: process.env.KAFKA_REVIEW!,
             messages: JSON.stringify(ReviewDto.parseDTOadd(req.body))}], async (err)=>{
-                if (err) console.log(err)
+                if (err) res.send(err)
                 else{res.send(req.body)}
         })
     })

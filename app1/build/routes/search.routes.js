@@ -49,7 +49,7 @@ router.get('/users', (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }).then(result => {
         const userDTOs = result.data.map((user) => UserDto.toDTO(user));
         res.send(userDTOs);
-    });
+    }).catch(e => res.send(e));
 }));
 router.get('/movies', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     yield axios_1.default.get(`${dataUrl}/s/movies`, {
@@ -57,7 +57,7 @@ router.get('/movies', (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }).then(result => {
         const moviesDTOs = result.data.map((movie) => MovieDto.toDTO(movie));
         res.send(moviesDTOs);
-    });
+    }).catch(e => res.send(e));
 }));
 router.get('/reviews', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     yield axios_1.default.get(`${dataUrl}/s/reviews`, {
@@ -65,6 +65,6 @@ router.get('/reviews', (req, res) => __awaiter(void 0, void 0, void 0, function*
     }).then(result => {
         const reviewsDTOs = result.data.map((review) => ReviewDto.toDTO(review));
         res.send(reviewsDTOs);
-    });
+    }).catch(e => res.send(e));
 }));
 module.exports = router;

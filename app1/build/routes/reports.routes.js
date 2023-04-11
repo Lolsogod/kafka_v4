@@ -19,14 +19,17 @@ const router = (0, express_1.Router)();
 //api proxy reports
 router.get('/top-rating', (_, res) => __awaiter(void 0, void 0, void 0, function* () {
     yield axios_1.default.get(`${dataUrl}/r/top-rating`)
-        .then(result => { res.send(result.data); });
+        .then(result => { res.send(result.data); })
+        .catch(e => res.send(e));
 }));
 router.get('/most-popular', (_, res) => __awaiter(void 0, void 0, void 0, function* () {
     yield axios_1.default.get(`${dataUrl}/r/most-popular`)
-        .then(result => { res.send(result.data); });
+        .then(result => { res.send(result.data); })
+        .catch(e => res.send(e));
 }));
 router.get('/top-reviews/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     yield axios_1.default.get(`${dataUrl}/r/top-reviews/${req.params.id}`)
-        .then(result => { res.send(result.data); });
+        .then(result => { res.send(result.data); })
+        .catch(e => res.send(e));
 }));
 module.exports = router;

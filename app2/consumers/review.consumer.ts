@@ -16,9 +16,7 @@ revConsumer.on('message', async (message)=>{
     parsed.author = await User.findOne({login: parsed.author})
     parsed.movie = await Movie.findOne({title: parsed.movie})
     const review = await new Review(parsed)
-    try{
-        await review.save()  
-    }catch(e) {console.log(e)}  
+    await review.save().catch(e=>console.log(e))  
 })
 
 revConsumer.on('error', (err)=>{

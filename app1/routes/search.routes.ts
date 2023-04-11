@@ -14,7 +14,7 @@ router.get('/users', async (req,res)=>{
       }).then(result => {
         const userDTOs = result.data.map((user: any) => UserDto.toDTO(user));
         res.send(userDTOs)
-      })
+      }).catch(e => res.send(e))
 })
 router.get('/movies', async (req,res)=>{
     await axios.get(`${dataUrl}/s/movies`, {
@@ -22,7 +22,7 @@ router.get('/movies', async (req,res)=>{
       }).then(result => {
         const moviesDTOs = result.data.map((movie: any) => MovieDto.toDTO(movie));
         res.send(moviesDTOs)
-      })
+      }).catch(e => res.send(e))
 })
 router.get('/reviews', async (req,res)=>{
     await axios.get(`${dataUrl}/s/reviews`, {
@@ -30,7 +30,7 @@ router.get('/reviews', async (req,res)=>{
       }).then(result => {
         const reviewsDTOs = result.data.map((review: any) => ReviewDto.toDTO(review));
         res.send(reviewsDTOs)
-      })
+      }).catch(e => res.send(e))
 })
 
 module.exports = router

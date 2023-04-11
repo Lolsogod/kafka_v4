@@ -10,9 +10,7 @@ const usrConsumer = new kafka.ConsumerGroup({
 
 usrConsumer.on('message', async (message)=>{
     const user = await new User(JSON.parse(message.value.toString()))
-    try{
-        await user.save()  
-    }catch(e) {console.log(e)} 
+    await user.save().catch(e=>console.log(e))  
 })
 
 usrConsumer.on('error', (err)=>{

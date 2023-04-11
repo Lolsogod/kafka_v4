@@ -24,12 +24,7 @@ const usrConsumer = new kafka_node_1.default.ConsumerGroup({
 exports.usrConsumer = usrConsumer;
 usrConsumer.on('message', (message) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield new User_1.User(JSON.parse(message.value.toString()));
-    try {
-        yield user.save();
-    }
-    catch (e) {
-        console.log(e);
-    }
+    yield user.save().catch(e => console.log(e));
 }));
 usrConsumer.on('error', (err) => {
     console.log(err);

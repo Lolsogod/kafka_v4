@@ -10,9 +10,7 @@ const movConsumer = new kafka.ConsumerGroup({
 
 movConsumer.on('message', async (message)=>{
     const movie = await new Movie(JSON.parse(message.value.toString()))
-    try{
-        await movie.save()  
-    }catch(e) {console.log(e)} 
+    await movie.save().catch(e=>console.log(e))  
   })
   movConsumer.on('error', (err)=>{
     console.log(err)

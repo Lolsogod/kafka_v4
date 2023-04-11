@@ -7,14 +7,17 @@ const router = Router()
 router.get('/top-rating', async (_,res)=>{
     await axios.get(`${dataUrl}/r/top-rating`)
     .then(result => {res.send(result.data)})
+    .catch(e => res.send(e))
 })
 router.get('/most-popular', async (_,res)=>{
     await axios.get(`${dataUrl}/r/most-popular`, )
     .then(result => {res.send(result.data)})
+    .catch(e => res.send(e))
 })
 router.get('/top-reviews/:id', async (req,res)=>{
     await axios.get(`${dataUrl}/r/top-reviews/${req.params.id}`)
     .then(result => {res.send(result.data)})
+    .catch(e => res.send(e))
 })
 
 module.exports = router

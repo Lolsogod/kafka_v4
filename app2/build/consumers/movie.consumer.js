@@ -24,12 +24,7 @@ const movConsumer = new kafka_node_1.default.ConsumerGroup({
 exports.movConsumer = movConsumer;
 movConsumer.on('message', (message) => __awaiter(void 0, void 0, void 0, function* () {
     const movie = yield new Movie_1.Movie(JSON.parse(message.value.toString()));
-    try {
-        yield movie.save();
-    }
-    catch (e) {
-        console.log(e);
-    }
+    yield movie.save().catch(e => console.log(e));
 }));
 movConsumer.on('error', (err) => {
     console.log(err);

@@ -29,12 +29,7 @@ revConsumer.on('message', (message) => __awaiter(void 0, void 0, void 0, functio
     parsed.author = yield User_1.User.findOne({ login: parsed.author });
     parsed.movie = yield Movie_1.Movie.findOne({ title: parsed.movie });
     const review = yield new Review_1.Review(parsed);
-    try {
-        yield review.save();
-    }
-    catch (e) {
-        console.log(e);
-    }
+    yield review.save().catch(e => console.log(e));
 }));
 revConsumer.on('error', (err) => {
     console.log(err);

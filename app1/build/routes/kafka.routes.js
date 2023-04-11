@@ -50,7 +50,7 @@ usrProducer.on('ready', () => __awaiter(void 0, void 0, void 0, function* () {
         usrProducer.send([{ topic: process.env.KAFKA_USER,
                 messages: JSON.stringify(UserDto.parseDTOadd(req.body)) }], (err) => __awaiter(void 0, void 0, void 0, function* () {
             if (err)
-                console.log(err);
+                res.send(err);
             else {
                 res.send(req.body);
             }
@@ -62,7 +62,7 @@ movProducer.on('ready', () => __awaiter(void 0, void 0, void 0, function* () {
         usrProducer.send([{ topic: process.env.KAFKA_MOVIE,
                 messages: JSON.stringify(MovieDto.parseDTOadd(req.body)) }], (err) => __awaiter(void 0, void 0, void 0, function* () {
             if (err)
-                console.log(err);
+                res.send(err);
             else {
                 res.send(req.body);
             }
@@ -74,7 +74,7 @@ revProducer.on('ready', () => __awaiter(void 0, void 0, void 0, function* () {
         revProducer.send([{ topic: process.env.KAFKA_REVIEW,
                 messages: JSON.stringify(ReviewDto.parseDTOadd(req.body)) }], (err) => __awaiter(void 0, void 0, void 0, function* () {
             if (err)
-                console.log(err);
+                res.send(err);
             else {
                 res.send(req.body);
             }
