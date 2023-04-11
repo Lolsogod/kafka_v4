@@ -1,6 +1,6 @@
 FROM node:alpine
 WORKDIR /app
-COPY package.json index.js /app/
+COPY package.json /build/ /app/
 RUN npm install
 RUN npm i -g nodemon
-CMD [ "nodemon", "index.js" ]
+CMD [ "nodemon", "./build/index.js" ]
