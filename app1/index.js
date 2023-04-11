@@ -22,14 +22,10 @@ const client = new kafka_node_1.default.KafkaClient({ kafkaHost: process.env.KAF
 const usrProducer = new kafka_node_1.default.Producer(client);
 const movProducer = new kafka_node_1.default.Producer(client);
 const revProducer = new kafka_node_1.default.Producer(client);
-console.log("-----------------------------------");
-console.log(process.env.KAFKA_USER);
-console.log("-----------------------------------");
 usrProducer.on('ready', () => __awaiter(void 0, void 0, void 0, function* () {
     app.post('/reg', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         usrProducer.send([{ topic: process.env.KAFKA_USER,
                 messages: JSON.stringify(req.body) }], (err, data) => __awaiter(void 0, void 0, void 0, function* () {
-            console.log("user sent");
             if (err)
                 console.log(err);
             else {
@@ -42,7 +38,6 @@ movProducer.on('ready', () => __awaiter(void 0, void 0, void 0, function* () {
     app.post('/movie', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         usrProducer.send([{ topic: process.env.KAFKA_MOVIE,
                 messages: JSON.stringify(req.body) }], (err, data) => __awaiter(void 0, void 0, void 0, function* () {
-            console.log("movie sent");
             if (err)
                 console.log(err);
             else {

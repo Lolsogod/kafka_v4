@@ -69,8 +69,6 @@ const revConsumer = new kafka.ConsumerGroup({
 }, process.env.KAFKA_REVIEW!);
 //user consumer
 usrConsumer.on('message', async (message)=>{
-  console.log("usr read......")
-  console.log(message.value)
   const user = await new User(JSON.parse(message.value.toString()))
   try{
       await user.save()  
@@ -81,8 +79,6 @@ usrConsumer.on('error', (err)=>{
 })
 //movie consumer
 movConsumer.on('message', async (message)=>{
-  console.log("movie read......")
-  console.log(message.value)
   const movie = await new Movie(JSON.parse(message.value.toString()))
   try{
       await movie.save()  
@@ -93,8 +89,6 @@ movConsumer.on('error', (err)=>{
 })
 //review consumer
 revConsumer.on('message', async (message)=>{
-  console.log("review read......")
-  console.log(message.value)
   let parsed = JSON.parse(message.value.toString())
   parsed.author = await User.findOne({login: parsed.author})
   parsed.movie = await Movie.findOne({title: parsed.movie})

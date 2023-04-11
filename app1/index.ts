@@ -10,15 +10,10 @@ const usrProducer = new kafka.Producer(client)
 const movProducer = new kafka.Producer(client)
 const revProducer = new kafka.Producer(client)
 
-console.log("-----------------------------------")
-console.log(process.env.KAFKA_USER)
-console.log("-----------------------------------")
-
 usrProducer.on('ready', async ()=>{
     app.post('/reg', async (req,res)=>{
         usrProducer.send([{topic: process.env.KAFKA_USER!,
             messages: JSON.stringify(req.body)}], async (err,data)=>{
-                console.log("user sent")
                 if (err) console.log(err)
                 else{res.send(req.body)}
         })
@@ -28,7 +23,6 @@ movProducer.on('ready', async ()=>{
     app.post('/movie', async (req,res)=>{
         usrProducer.send([{topic: process.env.KAFKA_MOVIE!,
             messages: JSON.stringify(req.body)}], async (err,data)=>{
-                console.log("movie sent")
                 if (err) console.log(err)
                 else{res.send(req.body)}
         })

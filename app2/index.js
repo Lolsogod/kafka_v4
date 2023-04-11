@@ -60,8 +60,6 @@ const revConsumer = new kafka_node_1.default.ConsumerGroup({
 }, process.env.KAFKA_REVIEW);
 //user consumer
 usrConsumer.on('message', (message) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("usr read......");
-    console.log(message.value);
     const user = yield new User(JSON.parse(message.value.toString()));
     try {
         yield user.save();
@@ -75,8 +73,6 @@ usrConsumer.on('error', (err) => {
 });
 //movie consumer
 movConsumer.on('message', (message) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("movie read......");
-    console.log(message.value);
     const movie = yield new Movie(JSON.parse(message.value.toString()));
     try {
         yield movie.save();
@@ -90,8 +86,6 @@ movConsumer.on('error', (err) => {
 });
 //review consumer
 revConsumer.on('message', (message) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("review read......");
-    console.log(message.value);
     let parsed = JSON.parse(message.value.toString());
     parsed.author = yield User.findOne({ login: parsed.author });
     parsed.movie = yield Movie.findOne({ title: parsed.movie });
