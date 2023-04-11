@@ -3,49 +3,41 @@ import kafka from 'kafka-node';
 import axios from 'axios';
 const app = express()
 app.use(express.json())
-const dataUrl = process.env.DATA_URL || "http://loclhost:8081"
+const dataUrl = process.env.DATA_URL
 
 const client = new kafka.KafkaClient({kafkaHost: process.env.KAFKA_BOOTSTRAP_SERVERS})
-const producer = new kafka.Producer(client)
-const producer2 = new kafka.Producer(client)
+const usrProducer = new kafka.Producer(client)
+const movProducer = new kafka.Producer(client)
+const revProducer = new kafka.Producer(client)
 
 console.log("-----------------------------------")
 console.log(process.env.KAFKA_USER)
 console.log("-----------------------------------")
 
-producer.on('ready', async ()=>{
+usrProducer.on('ready', async ()=>{
     app.post('/reg', async (req,res)=>{
-        producer.send([{topic: "user",
+        usrProducer.send([{topic: process.env.KAFKA_USER!,
             messages: JSON.stringify(req.body)}], async (err,data)=>{
                 console.log("user sent")
                 if (err) console.log(err)
                 else{res.send(req.body)}
         })
     })
-    /*
+})
+movProducer.on('ready', async ()=>{
     app.post('/movie', async (req,res)=>{
-        console.log('##########################################.')
-        console.log("sent")
-        console.log('##########################################.')
-        producer.send([{topic: "movie",
+        usrProducer.send([{topic: process.env.KAFKA_MOVIE!,
             messages: JSON.stringify(req.body)}], async (err,data)=>{
+                console.log("movie sent")
                 if (err) console.log(err)
                 else{res.send(req.body)}
         })
     })
-    app.post('/review', async (req,res)=>{
-        producer.send([{topic: "review",
-            messages: JSON.stringify(req.body)}], async (err,data)=>{
-                if (err) console.log(err)
-                else{res.send(req.body)}
-        })
-    })*/
 })
-producer2.on('ready', async ()=>{
-    app.post('/movie', async (req,res)=>{
-        producer.send([{topic: "movie",
+revProducer.on('ready', async ()=>{
+    app.post('/review', async (req,res)=>{
+        revProducer.send([{topic: process.env.KAFKA_REVIEW!,
             messages: JSON.stringify(req.body)}], async (err,data)=>{
-                console.log("movie sent")
                 if (err) console.log(err)
                 else{res.send(req.body)}
         })

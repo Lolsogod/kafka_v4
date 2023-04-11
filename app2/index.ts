@@ -4,9 +4,7 @@ import { Schema, model, connect, ObjectId, Types } from 'mongoose';
 const app = express()
 app.use(express.json())
 
-
-
-connect(process.env.MONGO_URL || "mongodb://mongo:27017/app2")
+connect(process.env.MONGO_URL!)
 //user model
 interface IUser {
     mail: String,
@@ -48,67 +46,64 @@ const reviewSchema = new Schema<IReview>({
 })
 reviewSchema.index({ author: 1, movie: 1}, { unique: true });
 const Review = model<IReview>('review', reviewSchema);
-//user consumer
-const consumer = new kafka.ConsumerGroup({
+//consumers init
+const usrConsumer = new kafka.ConsumerGroup({
   kafkaHost: process.env.KAFKA_BOOTSTRAP_SERVERS,
   groupId: 'users',
   fromOffset: 'earliest',
   autoCommit: true
-}, 'user');
+}, process.env.KAFKA_USER!);
 
-const consumer2 = new kafka.ConsumerGroup({
+const movConsumer = new kafka.ConsumerGroup({
   kafkaHost: process.env.KAFKA_BOOTSTRAP_SERVERS,
   groupId: 'movies',
   fromOffset: 'earliest',
   autoCommit: true
-}, 'movie');
-/*const consumer = new kafka.Consumer(client,
-    [{topic: 'user'}],
-    {autoCommit: true, groupId: 'group1'}
-);
-const consumer2 = new kafka.Consumer(client,
-  [{topic: 'movie'}],
-  {autoCommit: true, groupId: 'group2'}
-);
+}, process.env.KAFKA_MOVIE!);
 
-consumer.on('message', async (message)=>{
-    console.log("read......")
-    if (message.topic == 'movie'){
-        const movie = await new Movie(JSON.parse(message.value.toString()))
-        try{
-            await movie.save()  
-        }catch(e) {console.log(e)} 
-    }
-    else if (message.topic == 'user'){
-        const user = await new User(JSON.parse(message.value.toString()))
-        try{
-            await user.save()  
-        }catch(e) {console.log(e)} 
-    }
-    else if (message.topic == 'review'){
-        let parsed = JSON.parse(message.value.toString())
-        parsed.author = await User.findOne({login: parsed.author})
-        parsed.movie = await Movie.findOne({title: parsed.movie})
-        const review = await new Review(parsed)
-        try{
-            await review.save()  
-        }catch(e) {console.log(e)} 
-    }
-})*/
-
-consumer.on('message', async (message)=>{
+const revConsumer = new kafka.ConsumerGroup({
+  kafkaHost: process.env.KAFKA_BOOTSTRAP_SERVERS,
+  groupId: 'reviews',
+  fromOffset: 'earliest',
+  autoCommit: true
+}, process.env.KAFKA_REVIEW!);
+//user consumer
+usrConsumer.on('message', async (message)=>{
   console.log("usr read......")
   console.log(message.value)
+  const user = await new User(JSON.parse(message.value.toString()))
+  try{
+      await user.save()  
+  }catch(e) {console.log(e)} 
 })
-consumer2.on('message', async (message)=>{
+usrConsumer.on('error', (err)=>{
+  console.log(err)
+})
+//movie consumer
+movConsumer.on('message', async (message)=>{
   console.log("movie read......")
   console.log(message.value)
-  
+  const movie = await new Movie(JSON.parse(message.value.toString()))
+  try{
+      await movie.save()  
+  }catch(e) {console.log(e)} 
 })
-consumer.on('error', (err)=>{
-    console.log(err)
+movConsumer.on('error', (err)=>{
+  console.log(err)
 })
-consumer2.on('error', (err)=>{
+//review consumer
+revConsumer.on('message', async (message)=>{
+  console.log("review read......")
+  console.log(message.value)
+  let parsed = JSON.parse(message.value.toString())
+  parsed.author = await User.findOne({login: parsed.author})
+  parsed.movie = await Movie.findOne({title: parsed.movie})
+  const review = await new Review(parsed)
+  try{
+      await review.save()  
+  }catch(e) {console.log(e)}  
+})
+revConsumer.on('error', (err)=>{
   console.log(err)
 })
 

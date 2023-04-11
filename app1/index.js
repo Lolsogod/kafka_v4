@@ -17,16 +17,17 @@ const kafka_node_1 = __importDefault(require("kafka-node"));
 const axios_1 = __importDefault(require("axios"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
-const dataUrl = process.env.DATA_URL || "http://loclhost:8081";
+const dataUrl = process.env.DATA_URL;
 const client = new kafka_node_1.default.KafkaClient({ kafkaHost: process.env.KAFKA_BOOTSTRAP_SERVERS });
-const producer = new kafka_node_1.default.Producer(client);
-const producer2 = new kafka_node_1.default.Producer(client);
+const usrProducer = new kafka_node_1.default.Producer(client);
+const movProducer = new kafka_node_1.default.Producer(client);
+const revProducer = new kafka_node_1.default.Producer(client);
 console.log("-----------------------------------");
 console.log(process.env.KAFKA_USER);
 console.log("-----------------------------------");
-producer.on('ready', () => __awaiter(void 0, void 0, void 0, function* () {
+usrProducer.on('ready', () => __awaiter(void 0, void 0, void 0, function* () {
     app.post('/reg', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        producer.send([{ topic: "user",
+        usrProducer.send([{ topic: process.env.KAFKA_USER,
                 messages: JSON.stringify(req.body) }], (err, data) => __awaiter(void 0, void 0, void 0, function* () {
             console.log("user sent");
             if (err)
@@ -36,30 +37,24 @@ producer.on('ready', () => __awaiter(void 0, void 0, void 0, function* () {
             }
         }));
     }));
-    /*
-    app.post('/movie', async (req,res)=>{
-        console.log('##########################################.')
-        console.log("sent")
-        console.log('##########################################.')
-        producer.send([{topic: "movie",
-            messages: JSON.stringify(req.body)}], async (err,data)=>{
-                if (err) console.log(err)
-                else{res.send(req.body)}
-        })
-    })
-    app.post('/review', async (req,res)=>{
-        producer.send([{topic: "review",
-            messages: JSON.stringify(req.body)}], async (err,data)=>{
-                if (err) console.log(err)
-                else{res.send(req.body)}
-        })
-    })*/
 }));
-producer2.on('ready', () => __awaiter(void 0, void 0, void 0, function* () {
+movProducer.on('ready', () => __awaiter(void 0, void 0, void 0, function* () {
     app.post('/movie', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        producer.send([{ topic: "movie",
+        usrProducer.send([{ topic: process.env.KAFKA_MOVIE,
                 messages: JSON.stringify(req.body) }], (err, data) => __awaiter(void 0, void 0, void 0, function* () {
             console.log("movie sent");
+            if (err)
+                console.log(err);
+            else {
+                res.send(req.body);
+            }
+        }));
+    }));
+}));
+revProducer.on('ready', () => __awaiter(void 0, void 0, void 0, function* () {
+    app.post('/review', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        revProducer.send([{ topic: process.env.KAFKA_REVIEW,
+                messages: JSON.stringify(req.body) }], (err, data) => __awaiter(void 0, void 0, void 0, function* () {
             if (err)
                 console.log(err);
             else {
