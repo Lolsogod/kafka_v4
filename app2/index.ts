@@ -5,9 +5,7 @@ const app = express()
 app.use(express.json())
 
 
-console.log("-----------------------------------")
-console.log(process.env.KAFKA_USER)
-console.log("-----------------------------------")
+
 connect(process.env.MONGO_URL || "mongodb://mongo:27017/app2")
 //user model
 interface IUser {
@@ -51,12 +49,30 @@ const reviewSchema = new Schema<IReview>({
 reviewSchema.index({ author: 1, movie: 1}, { unique: true });
 const Review = model<IReview>('review', reviewSchema);
 //user consumer
-const client = new kafka.KafkaClient({kafkaHost: process.env.KAFKA_BOOTSTRAP_SERVERS})
-const consumer = new kafka.Consumer(client,
-    [{topic: 'user'}, {topic: 'movie'}, {topic: 'review'}],
-    {autoCommit: false}
+const consumer = new kafka.ConsumerGroup({
+  kafkaHost: process.env.KAFKA_BOOTSTRAP_SERVERS,
+  groupId: 'users',
+  fromOffset: 'earliest',
+  autoCommit: true
+}, 'user');
+
+const consumer2 = new kafka.ConsumerGroup({
+  kafkaHost: process.env.KAFKA_BOOTSTRAP_SERVERS,
+  groupId: 'movies',
+  fromOffset: 'earliest',
+  autoCommit: true
+}, 'movie');
+/*const consumer = new kafka.Consumer(client,
+    [{topic: 'user'}],
+    {autoCommit: true, groupId: 'group1'}
 );
+const consumer2 = new kafka.Consumer(client,
+  [{topic: 'movie'}],
+  {autoCommit: true, groupId: 'group2'}
+);
+
 consumer.on('message', async (message)=>{
+    console.log("read......")
     if (message.topic == 'movie'){
         const movie = await new Movie(JSON.parse(message.value.toString()))
         try{
@@ -78,9 +94,22 @@ consumer.on('message', async (message)=>{
             await review.save()  
         }catch(e) {console.log(e)} 
     }
+})*/
+
+consumer.on('message', async (message)=>{
+  console.log("usr read......")
+  console.log(message.value)
+})
+consumer2.on('message', async (message)=>{
+  console.log("movie read......")
+  console.log(message.value)
+  
 })
 consumer.on('error', (err)=>{
     console.log(err)
+})
+consumer2.on('error', (err)=>{
+  console.log(err)
 })
 
 //search API
