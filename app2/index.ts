@@ -15,4 +15,4 @@ const usrCons = usrConsumer
 const movCons = movConsumer
 const revCons = revConsumer
 
-app.listen(process.env.PORT)
+app.listen(process.env.PORT, ()=>{console.log("Consumer service started")})

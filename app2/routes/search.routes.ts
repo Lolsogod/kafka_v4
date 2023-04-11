@@ -14,7 +14,9 @@ router.get('/movies', async (req,res)=>{
     res.send(await Movie.find(req.query))
 })
 router.get('/reviews', async (req,res)=>{
-    res.send(await Review.find(req.query))
+    res.send(await Review.find(req.query)
+                    .populate('author')
+                    .populate('movie'))
 })
 
 module.exports = router

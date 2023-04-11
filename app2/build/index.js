@@ -17,4 +17,4 @@ app.use('/s', require('./routes/search.routes'));
 const usrCons = user_consumer_1.usrConsumer;
 const movCons = movie_consumer_1.movConsumer;
 const revCons = review_consumer_1.revConsumer;
-app.listen(process.env.PORT);
+app.listen(process.env.PORT, () => { console.log("Consumer service started"); });

@@ -22,6 +22,8 @@ router.get('/movies', (req, res) => __awaiter(void 0, void 0, void 0, function* 
     res.send(yield Movie_1.Movie.find(req.query));
 }));
 router.get('/reviews', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.send(yield Review_1.Review.find(req.query));
+    res.send(yield Review_1.Review.find(req.query)
+        .populate('author')
+        .populate('movie'));
 }));
 module.exports = router;

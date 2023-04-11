@@ -9,4 +9,4 @@ app.use(express_1.default.json());
 app.use('/r', require('./routes/reports.routes'));
 app.use('/s', require('./routes/search.routes'));
 app.use('/', require('./routes/kafka.routes'));
-app.listen(process.env.PORT);
+app.listen(process.env.PORT, () => { console.log("Producer service started"); });
