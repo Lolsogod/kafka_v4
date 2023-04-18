@@ -13,6 +13,9 @@ const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use('/r', require('./routes/reports.routes'));
 app.use('/s', require('./routes/search.routes'));
+app.get('/heartbeat', (req, res) => {
+    res.status(200);
+});
 //consumers init
 const usrCons = user_consumer_1.usrConsumer;
 const movCons = movie_consumer_1.movConsumer;

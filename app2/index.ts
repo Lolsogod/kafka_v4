@@ -10,6 +10,9 @@ app.use(express.json())
 app.use('/r', require('./routes/reports.routes'))
 app.use('/s', require('./routes/search.routes'))
 
+app.get('/heartbeat', (req,res)=>{
+    res.status(200)
+})
 //consumers init
 const usrCons = usrConsumer
 const movCons = movConsumer
